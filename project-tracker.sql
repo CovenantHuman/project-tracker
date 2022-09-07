@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 14.4
--- Dumped by pg_dump version 14.4
+-- Dumped from database version 14.5 (Homebrew)
+-- Dumped by pg_dump version 14.5 (Homebrew)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,7 +21,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: grades; Type: TABLE; Schema: public; Owner: eleahloucks
+-- Name: grades; Type: TABLE; Schema: public; Owner: michaelahealton
 --
 
 CREATE TABLE public.grades (
@@ -32,10 +32,10 @@ CREATE TABLE public.grades (
 );
 
 
-ALTER TABLE public.grades OWNER TO eleahloucks;
+ALTER TABLE public.grades OWNER TO michaelahealton;
 
 --
--- Name: grades_id_seq; Type: SEQUENCE; Schema: public; Owner: eleahloucks
+-- Name: grades_id_seq; Type: SEQUENCE; Schema: public; Owner: michaelahealton
 --
 
 CREATE SEQUENCE public.grades_id_seq
@@ -47,17 +47,17 @@ CREATE SEQUENCE public.grades_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.grades_id_seq OWNER TO eleahloucks;
+ALTER TABLE public.grades_id_seq OWNER TO michaelahealton;
 
 --
--- Name: grades_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: eleahloucks
+-- Name: grades_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: michaelahealton
 --
 
 ALTER SEQUENCE public.grades_id_seq OWNED BY public.grades.id;
 
 
 --
--- Name: projects; Type: TABLE; Schema: public; Owner: eleahloucks
+-- Name: projects; Type: TABLE; Schema: public; Owner: michaelahealton
 --
 
 CREATE TABLE public.projects (
@@ -68,10 +68,10 @@ CREATE TABLE public.projects (
 );
 
 
-ALTER TABLE public.projects OWNER TO eleahloucks;
+ALTER TABLE public.projects OWNER TO michaelahealton;
 
 --
--- Name: projects_id_seq; Type: SEQUENCE; Schema: public; Owner: eleahloucks
+-- Name: projects_id_seq; Type: SEQUENCE; Schema: public; Owner: michaelahealton
 --
 
 CREATE SEQUENCE public.projects_id_seq
@@ -83,31 +83,48 @@ CREATE SEQUENCE public.projects_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.projects_id_seq OWNER TO eleahloucks;
+ALTER TABLE public.projects_id_seq OWNER TO michaelahealton;
 
 --
--- Name: projects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: eleahloucks
+-- Name: projects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: michaelahealton
 --
 
 ALTER SEQUENCE public.projects_id_seq OWNED BY public.projects.id;
 
 
 --
--- Name: students; Type: TABLE; Schema: public; Owner: eleahloucks
+-- Name: students; Type: TABLE; Schema: public; Owner: michaelahealton
 --
 
 CREATE TABLE public.students (
     id integer NOT NULL,
     first_name character varying(30),
     last_name character varying(30),
-    github character varying(30)
+    github character varying(30) NOT NULL
 );
 
 
-ALTER TABLE public.students OWNER TO eleahloucks;
+ALTER TABLE public.students OWNER TO michaelahealton;
 
 --
--- Name: students_id_seq; Type: SEQUENCE; Schema: public; Owner: eleahloucks
+-- Name: report_card_view; Type: VIEW; Schema: public; Owner: michaelahealton
+--
+
+CREATE VIEW public.report_card_view AS
+ SELECT students.first_name,
+    students.last_name,
+    projects.title,
+    projects.max_grade,
+    grades.grade
+   FROM ((public.students
+     JOIN public.grades ON (((students.github)::text = (grades.student_github)::text)))
+     JOIN public.projects ON (((projects.title)::text = (grades.project_title)::text)));
+
+
+ALTER TABLE public.report_card_view OWNER TO michaelahealton;
+
+--
+-- Name: students_id_seq; Type: SEQUENCE; Schema: public; Owner: michaelahealton
 --
 
 CREATE SEQUENCE public.students_id_seq
@@ -119,38 +136,38 @@ CREATE SEQUENCE public.students_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.students_id_seq OWNER TO eleahloucks;
+ALTER TABLE public.students_id_seq OWNER TO michaelahealton;
 
 --
--- Name: students_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: eleahloucks
+-- Name: students_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: michaelahealton
 --
 
 ALTER SEQUENCE public.students_id_seq OWNED BY public.students.id;
 
 
 --
--- Name: grades id; Type: DEFAULT; Schema: public; Owner: eleahloucks
+-- Name: grades id; Type: DEFAULT; Schema: public; Owner: michaelahealton
 --
 
 ALTER TABLE ONLY public.grades ALTER COLUMN id SET DEFAULT nextval('public.grades_id_seq'::regclass);
 
 
 --
--- Name: projects id; Type: DEFAULT; Schema: public; Owner: eleahloucks
+-- Name: projects id; Type: DEFAULT; Schema: public; Owner: michaelahealton
 --
 
 ALTER TABLE ONLY public.projects ALTER COLUMN id SET DEFAULT nextval('public.projects_id_seq'::regclass);
 
 
 --
--- Name: students id; Type: DEFAULT; Schema: public; Owner: eleahloucks
+-- Name: students id; Type: DEFAULT; Schema: public; Owner: michaelahealton
 --
 
 ALTER TABLE ONLY public.students ALTER COLUMN id SET DEFAULT nextval('public.students_id_seq'::regclass);
 
 
 --
--- Data for Name: grades; Type: TABLE DATA; Schema: public; Owner: eleahloucks
+-- Data for Name: grades; Type: TABLE DATA; Schema: public; Owner: michaelahealton
 --
 
 COPY public.grades (id, student_github, project_title, grade) FROM stdin;
@@ -162,7 +179,7 @@ COPY public.grades (id, student_github, project_title, grade) FROM stdin;
 
 
 --
--- Data for Name: projects; Type: TABLE DATA; Schema: public; Owner: eleahloucks
+-- Data for Name: projects; Type: TABLE DATA; Schema: public; Owner: michaelahealton
 --
 
 COPY public.projects (id, title, description, max_grade) FROM stdin;
@@ -175,7 +192,7 @@ COPY public.projects (id, title, description, max_grade) FROM stdin;
 
 
 --
--- Data for Name: students; Type: TABLE DATA; Schema: public; Owner: eleahloucks
+-- Data for Name: students; Type: TABLE DATA; Schema: public; Owner: michaelahealton
 --
 
 COPY public.students (id, first_name, last_name, github) FROM stdin;
@@ -185,28 +202,28 @@ COPY public.students (id, first_name, last_name, github) FROM stdin;
 
 
 --
--- Name: grades_id_seq; Type: SEQUENCE SET; Schema: public; Owner: eleahloucks
+-- Name: grades_id_seq; Type: SEQUENCE SET; Schema: public; Owner: michaelahealton
 --
 
 SELECT pg_catalog.setval('public.grades_id_seq', 4, true);
 
 
 --
--- Name: projects_id_seq; Type: SEQUENCE SET; Schema: public; Owner: eleahloucks
+-- Name: projects_id_seq; Type: SEQUENCE SET; Schema: public; Owner: michaelahealton
 --
 
 SELECT pg_catalog.setval('public.projects_id_seq', 5, true);
 
 
 --
--- Name: students_id_seq; Type: SEQUENCE SET; Schema: public; Owner: eleahloucks
+-- Name: students_id_seq; Type: SEQUENCE SET; Schema: public; Owner: michaelahealton
 --
 
 SELECT pg_catalog.setval('public.students_id_seq', 2, true);
 
 
 --
--- Name: grades grades_pkey; Type: CONSTRAINT; Schema: public; Owner: eleahloucks
+-- Name: grades grades_pkey; Type: CONSTRAINT; Schema: public; Owner: michaelahealton
 --
 
 ALTER TABLE ONLY public.grades
@@ -214,7 +231,7 @@ ALTER TABLE ONLY public.grades
 
 
 --
--- Name: projects projects_pkey; Type: CONSTRAINT; Schema: public; Owner: eleahloucks
+-- Name: projects projects_pkey; Type: CONSTRAINT; Schema: public; Owner: michaelahealton
 --
 
 ALTER TABLE ONLY public.projects
@@ -222,11 +239,11 @@ ALTER TABLE ONLY public.projects
 
 
 --
--- Name: students students_pkey; Type: CONSTRAINT; Schema: public; Owner: eleahloucks
+-- Name: students students_pkey; Type: CONSTRAINT; Schema: public; Owner: michaelahealton
 --
 
 ALTER TABLE ONLY public.students
-    ADD CONSTRAINT students_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT students_pkey PRIMARY KEY (github);
 
 
 --
